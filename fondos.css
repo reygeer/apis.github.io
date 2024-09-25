@@ -1,11 +1,16 @@
 body {
-    background-color: bisque;
+    background-color: rgb(92, 3, 117);
 }
 
-.Container-Apis{
+.ContainerApis{
+    background-color: rgba(137, 43, 226, 0.767);
+    color: rgba(0, 247, 255, 0.788);
     flex-basis: auto;
     flex-wrap: wrap;
     display: flex;
     margin: 20px;
     padding: 20px;
+}
+button{
+    color: blue;
 }
