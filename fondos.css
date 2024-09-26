@@ -37,6 +37,7 @@ header {
 }
 
 .api1, .api2, .api3, .api4, .api5, .api6, .api7 {
+    background: linear-gradient(135deg, #00d9ff2b, #6b6b6b3f, #000000);/*sirve para darle degradado de coloresa las cosas*/
     background-color: #2b7b9a44;
     flex: 1 1 calc(20%);
     box-sizing: border-box;
@@ -49,14 +50,35 @@ header {
 .botonA1, .botonA2, .botonA3, .botonA4, .botonA5, .botonA6, .botonA7 {
     background-color: #0000001d;
     color: white;
+    border-radius: 10px;
     border: none;
     cursor: pointer;
 }
 
 .botonA1:hover, .botonA2:hover, .botonA3:hover, .botonA4:hover, .botonA5:hover, .botonA6:hover, .botonA7:hover {
-    background-color: #0056b3;
+    background: linear-gradient(135deg,  #000000,#6b6b6b3f,#00d9ff2b );
+
 }
 
 .api1:hover, .api2:hover, .api3:hover, .api4:hover, .api5:hover, .api6:hover, .api7:hover{
     background-color: #ffffff4d;
 }
+
+a {
+    text-decoration: none;
+    color: rgb(255, 255, 255);
+}
+
+/* div{
+    width: 300px;
+    height: 200px;
+    background: linear-gradient(135deg, #e0e0e0, #f5f5f5, #e0e0e0);
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    text-align: center;
+    line-height: 200px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+} */
