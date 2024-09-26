@@ -3,6 +3,7 @@
 <head>
     <title>Mini Mapa en Botón</title>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBxTGnZ5tb4Dq2bcu1uXtUNX5M4yc_Jqgo"></script>
+    <link rel="stylesheet" href="fondosgeolocalizacion.css">
     <style>
         #map {
             flex: auto;
@@ -13,7 +14,7 @@
     </style>
 </head>
 <body>
-    <button id="mapButton">Mostrar Mapa</button>
+    <button id="mapButton">Visualizar mapa</button>
     <div id="map"></div>
 
     <script>
@@ -35,5 +36,9 @@
 
         window.onload = initMap;
     </script>
+    <video class="video-background" autoplay muted loop>
+        <source src="zlda.mp4" type="video/mp4">
+        Tu navegador no soporta la etiqueta de video.
+    </video>
 </body>
 </html>

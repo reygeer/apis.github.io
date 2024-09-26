@@ -18,7 +18,11 @@ button{
 
 body {
     font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-    background-color: aliceblue;
+    background-color: rgba(127, 151, 21, 0.312);
+    background-image: url('R (1).jpg'); 
+            background-size: cover;
+            background-repeat: no-repeat;
+
 }
 
 header {
@@ -33,16 +37,17 @@ header {
 }
 
 .api1, .api2, .api3, .api4, .api5, .api6, .api7 {
-    background-color: aquamarine;
+    background-color: #2b7b9a44;
     flex: 1 1 calc(20%);
     box-sizing: border-box;
     text-align: center;
     margin: 5%;
     padding: 3%;
+    border-radius: 15px;
 }
 
 .botonA1, .botonA2, .botonA3, .botonA4, .botonA5, .botonA6, .botonA7 {
-    background-color: #007BFF;
+    background-color: #0000001d;
     color: white;
     border: none;
     cursor: pointer;
@@ -50,4 +55,8 @@ header {
 
 .botonA1:hover, .botonA2:hover, .botonA3:hover, .botonA4:hover, .botonA5:hover, .botonA6:hover, .botonA7:hover {
     background-color: #0056b3;
+}
+
+.api1:hover, .api2:hover, .api3:hover, .api4:hover, .api5:hover, .api6:hover, .api7:hover{
+    background-color: #ffffff4d;
 }
