@@ -1,4 +1,4 @@
-body {
+/* body {
 color: rgb(73, 6, 155);
 background-color: blueviolet;
 }
@@ -14,4 +14,40 @@ background-color: blueviolet;
 }
 button{
     color: rgb(0, 0, 255);
+} */
+
+body {
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    background-color: aliceblue;
+}
+
+header {
+    text-align: center;
+}
+
+.apis {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    text-align: center;
+}
+
+.api1, .api2, .api3, .api4, .api5, .api6, .api7 {
+    background-color: aquamarine;
+    flex: 1 1 calc(20%);
+    box-sizing: border-box;
+    text-align: center;
+    margin: 5%;
+    padding: 3%;
+}
+
+.botonA1, .botonA2, .botonA3, .botonA4, .botonA5, .botonA6, .botonA7 {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.botonA1:hover, .botonA2:hover, .botonA3:hover, .botonA4:hover, .botonA5:hover, .botonA6:hover, .botonA7:hover {
+    background-color: #0056b3;
 }
