@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mini Mapa en Botón</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBxTGnZ5tb4Dq2bcu1uXtUNX5M4yc_Jqgo"></script>
+    <style>
+        #map {
+            flex: auto;
+            height: 2000px;
+            width: 2000px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <button id="mapButton">Mostrar Mapa</button>
+    <div id="map"></div>
+
+    <script>
+        let mapVisible = false;
+
+        function initMap() {
+            var map = new google.maps.Map(document.getElementById('map'), {
+                center: {lat: -34.397, lng: 150.644},
+                zoom: 8
+            });
+        }
+
+        document.getElementById('mapButton').addEventListener('click', function() {
+            const mapDiv = document.getElementById('map');
+            mapVisible = !mapVisible;
+            mapDiv.style.display = mapVisible ? 'block' : 'none';
+            this.textContent = mapVisible ? 'Ocultar Mapa' : 'Mostrar Mapa';
+        });
+
+        window.onload = initMap;
+    </script>
+</body>
+</html>

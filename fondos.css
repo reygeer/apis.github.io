@@ -1,5 +1,6 @@
 body {
-    background-color: rgb(92, 3, 117);
+color: rgb(73, 6, 155);
+background-color: blueviolet;
 }
 
 .ContainerApis{
@@ -12,5 +13,5 @@ body {
     padding: 20px;
 }
 button{
-    color: blue;
+    color: rgb(0, 0, 255);
 }
