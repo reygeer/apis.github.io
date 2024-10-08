@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mapa con Marcadores Dinámicos</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBxTGnZ5tb4Dq2bcu1uXtUNX5M4yc_Jqgo&callback=initMap" async defer></script>
+    <script>
+      let map;
+      let markers = [];
+
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 19,
+          center: {lat:21.81430652818274,lng:-102.76931802188079}
+        });
+
+        map.addListener('click', function(event) {
+          addMarker(event.latLng);
+        });
+      }
+
+      function addMarker(location) {
+        const marker = new google.maps.Marker({
+          position: location,
+          map: map
+        });
+        markers.push(marker);
+      }
+
+      function setMapOnAll(map) {
+        for (let i = 0; i < markers.length; i++) {
+          markers[i].setMap(map);
+        }
+      }
+
+      function clearMarkers() {
+        setMapOnAll(null);
+      }
+
+      function deleteMarkers() {
+        clearMarkers();
+        markers = [];
+      }
+    </script>
+    <style>
+      #map {
+        height: 100%;
+      }
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+
+    
+    <button a  href="#" onclick="initMap()">Iniciar Mapa</button>
+    <button a href="Menu_mapas.html"><a href="Menu_mapas.html">Regresar al Menu de Mapas</a></button>
+    <button><a href="index.html">Ir al Menu Principal</a></button>
+    <button onclick="clearMarkers()">Ocultar Marcadores</button>
+    <button onclick="deleteMarkers()">Eliminar Marcadores</button>
+  </body>
+</html>
