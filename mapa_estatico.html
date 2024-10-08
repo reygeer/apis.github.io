@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mini Mapa en Botón</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBxTGnZ5tb4Dq2bcu1uXtUNX5M4yc_Jqgo"></script>
+    <link rel="stylesheet" href="fondosgeolocalizacion.css">
+    <style>
+        #map {
+            flex: auto;
+            height: 2000px;
+            width: 2000px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <button id="mapButton">Visualizar mapa</button>
+    <button><a href="index.html">Regresar a la pantalla principal</a></button>
+    <button><a href="Menu_mapas.html">Regresar al menu de mapas </a></button>
+    <div id="map"></div>
+
+    <script>
+        let mapVisible = false;
+
+        function initMap() {
+            var map = new google.maps.Map(document.getElementById('map'), {
+                center: {lat:21.814286607027682, lng:-102.76928583537172},
+                zoom: 22
+
+            });
+        }
+
+        document.getElementById('mapButton').addEventListener('click', function() {
+            const mapDiv = document.getElementById('map');
+            mapVisible = !mapVisible;
+            mapDiv.style.display = mapVisible ? 'block' : 'none';
+            this.textContent = mapVisible ? 'Ocultar Mapa' : 'Mostrar Mapa';
+        });
+
+        window.onload = initMap;
+    </script>
+    <video class="video-background" autoplay muted loop>
+        <source src="zlda.mp4" type="video/mp4">
+        Tu navegador no soporta la etiqueta de video.
+    </video>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa Estático con JavaScript</title>
+    <script>
+        function actualizarMapa() {
+            const lat = document.getElementById('lat').value;
+            const lng = document.getElementById('lng').value;
+            const zoom = document.getElementById('zoom').value;
+            const apiKey = 'AIzaSyBxTGnZ5tb4Dq2bcu1uXtUNX5M4yc_Jqgo';
+            const url = `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=${zoom}&size=600x300&maptype=roadmap&markers=color:red%7Clabel:C%7C${lat},${lng}&key=${apiKey}`;
+            document.getElementById('mapa').src = url;
+        }
+    </script>
+</head>
+<body>
+    <h1>Mapa Estático de Google Maps</h1>
+    <label for="lat">Latitud:</label>
+    <input type="text" id="lat" value="21.81430652818274"><br>
+    <label for="lng">Longitud:</label>
+    <input type="text" id="lng" value="-102.76931802188079"><br>
+    <label for="zoom">Zoom:</label>
+    <input type="number" id="zoom" value="13"><br>
+    <button onclick="actualizarMapa()">Actualizar Mapa</button>
+    <br><br>
+    <img id="mapa" src="https://maps.googleapis.com/maps/api/staticmap?center=40.712776,-74.005974&zoom=13&size=600x300&maptype=roadmap&markers=color:red%7Clabel:C%7C40.712776,-74.005974&key=AIzaSyBxTGnZ5tb4Dq2bcu1uXtUNX5M4yc_Jqgo" alt="Mapa Estático de Google Maps">
+</body>
+</html>
+ -->
