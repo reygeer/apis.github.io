@@ -36,7 +36,7 @@ header {
     text-align: center;
 }
 
-.api1, .api2, .api3, .api4, .api5, .api6, .api7 {
+.api1, .api2, .api3, .api4, .api5, .api6, .api7, .api8 {
     background: linear-gradient(135deg, #00d9ff2b, #6b6b6b3f, #000000);/*sirve para darle degradado de coloresa las cosas*/
     background-color: #2b7b9a44;
     flex: 1 1 calc(20%);
@@ -47,7 +47,7 @@ header {
     border-radius: 15px;
 }
 
-.botonA1, .botonA2, .botonA3, .botonA4, .botonA5, .botonA6, .botonA7 {
+.botonA1, .botonA2, .botonA3, .botonA4, .botonA5, .botonA6, .botonA7, .botonA8 {
     background-color: #0000001d;
     color: white;
     border-radius: 10px;
@@ -55,12 +55,12 @@ header {
     cursor: pointer;
 }
 
-.botonA1:hover, .botonA2:hover, .botonA3:hover, .botonA4:hover, .botonA5:hover, .botonA6:hover, .botonA7:hover {
+.botonA1:hover, .botonA2:hover, .botonA3:hover, .botonA4:hover, .botonA5:hover, .botonA6:hover, .botonA7:hover, .botonA8:hover {
     background: linear-gradient(135deg,  #000000,#6b6b6b3f,#00d9ff2b );
 
 }
 
-.api1:hover, .api2:hover, .api3:hover, .api4:hover, .api5:hover, .api6:hover, .api7:hover{
+.api1:hover, .api2:hover, .api3:hover, .api4:hover, .api5:hover, .api6:hover, .api7:hover, .api8:hover{
     background-color: #ffffff4d;
 }
 

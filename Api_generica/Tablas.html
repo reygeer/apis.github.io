@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Tabla de Usuarios</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        img {
+            max-width: 50px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<script>
+    // Definimos la ruta donde consultaremos los recursos
+    const API_URL = 'https://jsonplaceholder.typicode.com/';
+    // Obtenemos el elemento DOM html donde arrojaremos la info
+    const HTMLResponse = document.querySelector('#app');
+    
+    // Creamos la tabla y añadimos encabezados
+    const table = document.createElement('table');
+    const headerRow = document.createElement('tr');
+    
+    const headers = ['ID', 'Nombre', 'Username', 'Email', 'Teléfono', 'Sitio Web', 'Empresa', 'Lema de Empresa', 'Calle', 'Suite', 'Ciudad', 'Código Postal', 'Latitud', 'Longitud', 'Foto'];
+    
+    headers.forEach(headerText => {
+        const header = document.createElement('th');
+        header.textContent = headerText;
+        headerRow.appendChild(header);
+    });
+    
+    table.appendChild(headerRow);
+
+    // Realizamos la consulta a la API
+    fetch(`${API_URL}/users`)
+        .then(response => response.json())
+        .then((users) => {
+            users.forEach((user) => {
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>${user.id}</td>
+                    <td>${user.name}</td>
+                    <td>${user.username}</td>
+                    <td>${user.email}</td>
+                    <td>${user.phone}</td>
+                    <td>${user.website}</td>
+                    <td>${user.company.name}</td>
+                    <td>${user.company.catchPhrase}</td>
+                    <td>${user.address.street}</td>
+                    <td>${user.address.suite}</td>
+                    <td>${user.address.city}</td>
+                    <td>${user.address.zipcode}</td>
+                    <td>${user.address.geo.lat}</td>
+                    <td>${user.address.geo.lng}</td>
+                    <td><img src="https://via.placeholder.com/50" alt="Foto de ${user.name}"></td>
+                `;
+                
+                table.appendChild(row);
+            });
+            
+            // Al final, agregamos la tabla dentro del div obtenido
+            HTMLResponse.appendChild(table);
+        });
+</script>
+
+</body>
+</html>
