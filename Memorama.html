@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Memorama multijugador</title>
+<style>
+  /* Fuentes modernas */
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+
+  :root {
+    --color-dark-bg: #121212;
+    --color-dark-text: #eee;
+    --color-dark-card-bg: #222;
+    --color-dark-card-back-bg: #111;
+    --color-dark-card-flipped-bg: #000;
+    --color-dark-glow: #39ff14;
+
+    --color-light-bg: #fefefe;
+    --color-light-text: #111;
+    --color-light-card-bg: #e6e6e6;
+    --color-light-card-back-bg: #ccc;
+    --color-light-card-flipped-bg: #fff;
+    --color-light-glow: #0c71c3;
+
+    --color-neon-bg: #080811;
+    --color-neon-text: #00fff7;
+    --color-neon-card-bg: #121214;
+    --color-neon-card-back-bg: #0a0a0a;
+    --color-neon-card-flipped-bg: #0ff;
+    --color-neon-glow: #00f9ff;
+
+    --transition-speed: 0.4s;
+  }
+
+  body {
+    font-family: 'Poppins', Arial, sans-serif;
+    background: var(--color-dark-bg);
+    color: var(--color-dark-text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px 48px;
+    margin: 0;
+    min-height: 100vh;
+    transition: background var(--transition-speed), color var(--transition-speed);
+  }
+  h1 {
+    margin-bottom: 16px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 2.2rem;
+    letter-spacing: 0.05em;
+    user-select: none;
+  }
+  label {
+    font-weight: 600;
+    margin: 8px 8px 4px 0;
+    user-select: none;
+  }
+  select, button {
+    font-size: 1rem;
+    margin: 5px 8px 5px 0;
+    padding: 8px 16px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+    font-weight: 600;
+    font-family: 'Poppins', Arial, sans-serif;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16);
+  }
+  select:focus, button:focus {
+    outline: 3px solid var(--color-dark-glow);
+    outline-offset: 2px;
+  }
+
+  #reset-btn {
+    background: var(--color-dark-glow);
+    color: #111;
+    font-weight: 700;
+    box-shadow: 0 0 8px var(--color-dark-glow);
+  }
+  #reset-btn:hover {
+    background: #2dff44;
+    box-shadow: 0 0 14px #2dff44;
+  }
+
+  #mode-btn {
+    background: rgba(255 255 255 / 0.1);
+    color: var(--color-dark-glow);
+    border: 2px solid var(--color-dark-glow);
+    font-weight: 700;
+    box-shadow: 0 0 10px var(--color-dark-glow);
+    padding: 8px 20px;
+    margin-left: 8px;
+    user-select: none;
+    backdrop-filter: blur(12px);
+    transition:
+      background-color var(--transition-speed),
+      color var(--transition-speed),
+      border-color var(--transition-speed),
+      box-shadow var(--transition-speed);
+  }
+  #mode-btn:hover {
+    background: var(--color-dark-glow);
+    color: #121212;
+    box-shadow: 0 0 20px var(--color-dark-glow);
+  }
+
+  #board {
+    display: grid;
+    grid-template-columns: repeat(8, 72px);
+    grid-auto-rows: 72px;
+    gap: 16px;
+    margin-top: 28px;
+    justify-content: center;
+    perspective: 900px;
+  }
+
+  /* Card container for flipping */
+  .card {
+    width: 72px;
+    height: 72px;
+    cursor: pointer;
+    perspective: 800px;
+  }
+  .card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform var(--transition-speed);
+    transform-style: preserve-3d;
+    border-radius: 16px;
+    box-shadow: 0 0 5px rgba(57, 255, 20, 0.3);
+  }
+  /* Flipped state rotation */
+  .card.flipped .card-inner {
+    transform: rotateY(180deg);
+    box-shadow:
+      0 0 12px var(--color-dark-glow),
+      0 0 24px var(--color-dark-glow),
+      0 0 36px var(--color-dark-glow);
+  }
+  .card.matched .card-inner {
+    box-shadow:
+      0 0 20px var(--color-dark-glow),
+      0 0 40px var(--color-dark-glow),
+      0 0 60px var(--color-dark-glow);
+    cursor: default;
+  }
+
+  /* Front and back faces */
+  .card-front, .card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 16px;
+    backface-visibility: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3rem;
+    user-select: none;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+  }
+  .card-front {
+    background-color: var(--color-dark-card-bg);
+    color: transparent;
+  }
+  .card-back {
+    background-color: var(--color-dark-card-flipped-bg);
+    color: var(--color-dark-glow);
+    transform: rotateY(180deg);
+  }
+
+  /* Matched cards colors */
+  .card.matched .card-back {
+    background-color: #004400;
+    color: #39ff14;
+  }
+
+  #message {
+    margin-top: 18px;
+    font-size: 1.3rem;
+    font-weight: 600;
+    min-height: 1.4rem;
+    text-align: center;
+    letter-spacing: 0.02em;
+  }
+
+  #scores {
+    margin-top: 18px;
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .player-score {
+    background: var(--color-dark-card-bg);
+    border-radius: 12px;
+    padding: 12px 18px;
+    min-width: 110px;
+    text-align: center;
+    user-select: none;
+    font-weight: 600;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+  }
+
+  .player-score.active {
+    background: var(--color-dark-glow);
+    color: #111;
+    font-weight: 700;
+    box-shadow:
+      0 0 12px var(--color-dark-glow),
+      0 0 28px var(--color-dark-glow);
+  }
+
+
+  /* -------- MODOS ----------- */
+
+  /* Modo claro */
+  body.light {
+    background: var(--color-light-bg);
+    color: var(--color-light-text);
+  }
+  body.light #reset-btn {
+    background: var(--color-light-glow);
+    color: #fff;
+    box-shadow: 0 0 8px var(--color-light-glow);
+  }
+  body.light #mode-btn {
+    background: rgba(0 0 0 / 0.06);
+    color: var(--color-light-glow);
+    border-color: var(--color-light-glow);
+    box-shadow: 0 0 10px var(--color-light-glow);
+  }
+  body.light #mode-btn:hover {
+    background: var(--color-light-glow);
+    color: var(--color-light-bg);
+  }
+  body.light .card-front {
+    background-color: var(--color-light-card-bg);
+  }
+  body.light .card-back {
+    background-color: var(--color-light-card-flipped-bg);
+    color: var(--color-light-glow);
+  }
+  body.light .card.matched .card-back {
+    background-color: #004a90;
+    color: var(--color-light-glow);
+  }
+  body.light .player-score {
+    background: var(--color-light-card-bg);
+    color: var(--color-light-text);
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+  }
+  body.light .player-score.active {
+    background: var(--color-light-glow);
+    color: var(--color-light-bg);
+    font-weight: 700;
+    box-shadow:
+      0 0 20px var(--color-light-glow),
+      0 0 40px var(--color-light-glow);
+  }
+
+  /* Modo neón */
+  body.neon {
+    background: var(--color-neon-bg);
+    color: var(--color-neon-text);
+  }
+  body.neon #reset-btn {
+    background: var(--color-neon-glow);
+    color: #000;
+    box-shadow: 0 0 12px var(--color-neon-glow);
+  }
+  body.neon #mode-btn {
+    background: rgba(255 255 255 / 0.1);
+    color: var(--color-neon-glow);
+    border-color: var(--color-neon-glow);
+    box-shadow: 0 0 14px var(--color-neon-glow);
+  }
+  body.neon #mode-btn:hover {
+    background: var(--color-neon-glow);
+    color: var(--color-neon-bg);
+  }
+  body.neon .card-front {
+    background-color: var(--color-neon-card-back-bg);
+  }
+  body.neon .card-back {
+    background-color: var(--color-neon-card-flipped-bg);
+    color: var(--color-neon-glow);
+  }
+  body.neon .card.matched .card-back {
+    background-color: #00fff7;
+    color: var(--color-neon-glow);
+  }
+  body.neon .player-score {
+    background: var(--color-neon-card-bg);
+    color: var(--color-neon-text);
+    box-shadow: 0 1px 6px rgba(0, 255, 255, 0.2);
+  }
+  body.neon .player-score.active {
+    background: var(--color-neon-glow);
+    color: #000;
+    font-weight: 700;
+    box-shadow:
+      0 0 25px var(--color-neon-glow),
+      0 0 60px var(--color-neon-glow);
+  }
+
+</style>
+</head>
+<body class="dark">
+
+<h1>Memorama multijugador - Hasta 8 jugadores</h1>
+
+<div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; align-items: center; margin-bottom: 12px;">
+  <label for="category-select">Selecciona categoría:</label>
+  <select id="category-select" aria-label="Selecciona categoría"></select>
+
+  <label for="player-count-select">Número de jugadores:</label>
+  <select id="player-count-select" aria-label="Número de jugadores">
+    <option value="1">1 jugador</option>
+    <option value="2" selected>2 jugadores</option>
+    <option value="3">3 jugadores</option>
+    <option value="4">4 jugadores</option>
+    <option value="5">5 jugadores</option>
+    <option value="6">6 jugadores</option>
+    <option value="7">7 jugadores</option>
+    <option value="8">8 jugadores</option>
+  </select>
+
+  <button id="reset-btn">Iniciar / Reiniciar juego</button>
+
+  <button id="mode-btn" aria-label="Cambiar modo de color">Modo: Oscuro</button>
+</div>
+
+<div id="board" aria-live="polite" aria-label="Tablero de cartas"></div>
+
+<div id="message" aria-live="assertive" role="status"></div>
+
+<div id="scores" aria-label="Puntajes de jugadores"></div>
+
+<script>
+  const categorias = {
+    Animales: ['🐶','🐱','🦁','🐮','🐷','🐸','🐵','🦊','🐰','🐼','🐨','🐯','🦄','🐔','🐧','🐦','🦉','🐴','🐢','🐍'],
+    Frutas: ['🍎','🍌','🍓','🍇','🍉','🍒','🍑','🍍','🥭','🍐','🍊','🥝','🍋','🍈','🍏','🥥','🥑','🥒','🍅','🥕'],
+    Verduras: ['🥕','🌽','🥦','🥬','🧄','🧅','🍆','🥔','🍠','🥒','🌶️','🥗','🫑','🍄','🧄','🧅','🍅','🥕','🥒','🌽'],
+    Vehículos: ['🚗','🚕','🚌','🚎','🏎️','🚓','🚑','🚒','🚚','🚛','🚜','🚲','🛵','🏍️','🚤','⛵','🚀','🚁','🚂','🚄'],
+    Herramientas: ['🔧','🔨','🪓','🪚','🪛','🔩','⚙️','🧰','🔗','🪝','🛠️','🔫','🪃','🛡️','🧲','🪄','🧪','🧹','🧻','🧴'],
+    Ropa: ['👕','👖','👗','👚','🧥','👔','🧢','👟','👞','👠','🥾','🥿','🧦','🧤','🎩','🧣','👒','👑','🎓','🩳'],
+    Emociones: ['😀','😢','😡','😱','😎','😍','🥶','😴','🤔','😇','🤪','😭','😤','🤯','😈','👿','🤡','👻','💀','☠️'],
+    Deportes: ['⚽','🏀','🏈','⚾','🎾','🏐','🥊','⛳','🏓','🏸','🥋','🏒','🏑','🏏','🥅','🏹','🛷','🧗','🏄','🏊'],
+    Comida: ['🍕','🍔','🍟','🌮','🌭','🥗','🍣','🍝','🍜','🍲','🥪','🥙','🍤','🥟','🍦','🍩','🍪','🎂','🍰','🍫'],
+    Bebidas: ['🥤','🍺','☕','🍵','🧃','🥛','🧋','🍷','🍸','🍹','🍶','🥂','🍻','🥃','🧉','🥤','🧃','🥤','🍵','☕'],
+    Electrónica: ['📱','💻','🖥️','🖨️','🕹️','📷','📺','🎧','🎤','🎥','📻','💿','📼','📟','☎️','📞','🖱️','⌨️','🖲️','💡'],
+    Naturaleza: ['🌲','🌳','🌵','🌴','🌻','🌸','🌼','🌹','🌷','💐','🍀','🍁','🍂','🍃','🌾','🌿','☘️','🌺','🌞','🌛'],
+    Cielo: ['☀️','🌙','⭐','🌈','🌤️','☁️','⚡','🌧️','🌨️','🌩️','🌪️','🌫️','🌟','🌠','🌌','🌒','🌓','🌔','🌕','🌖'],
+    'Animales marinos': ['🐬','🐳','🐟','🦈','🦀','🐙','🐚','🪼','🦑','🦐','🐠','🐡','🦞','🦦','🦭','🐋','🐚','🐌','🐢','🐊'],
+    Insectos: ['🐝','🐞','🦋','🐜','🪲','🪳','🪰','🦗','🕷️','🦂','🦟','🐛','🐌','🐢','🐝','🐞','🦋','🐜','🪲','🦗'],
+    Instrumentos: ['🎸','🎹','🥁','🎺','🎷','🪕','🪗','🎻','🎤','📯','🎼','🎧','🎬','🎙️','🎚️','🎛️','🎵','🎶','🎤','🎷'],
+    Banderas: ['🇲🇽','🇺🇸','🇯🇵','🇫🇷','🇧🇷','🇨🇦','🇮🇹','🇪🇸','🇩🇪','🇷🇺','🇬🇧','🇨🇳','🇰🇷','🇮🇳','🇦🇺','🇿🇦','🇸🇪','🇳🇴','🇳🇱','🇧🇪'],
+    Profesiones: ['👮‍♂️','👩‍⚕️','👨‍🏫','👷‍♂️','👩‍🍳','🧑‍🚒','👨‍💻','👨‍🎨','👩‍🎤','👩‍🌾','👨‍🔧','👩‍🔬','👨‍🚀','👩‍✈️','👨‍🚒','👩‍🏭','👨‍⚖️','👩‍⚕️','👨‍🌾','👩‍🎓'],
+    'Transporte aéreo': ['✈️','🛩️','🚁','🛸','🪂','🛫','🛬','🎈','🪁','🪀','🛶','🚀','🚁','🛩️','🛫','🛬','🛸','🪂','🎈','🪁'],
+    Juegos: ['🎮','🧩','🎲','🃏','♟️','🧸','🪀','🪁','🎯','🎳','🎰','🎱','🕹️','🎮','🧩','🎲','🃏','♟️','🎯','🎳'],
+    Monedas: ['💰','💵','💴','💶','💷','🪙','💳','🏦','💸','💹','🪙','💰','💵','💴','💶','💷','💳','🏦','💸','💹'],
+    Tiempo: ['🕐','🕒','🕔','🕖','🕘','🕚','⏰','🕰️','🌡️','⏳','⏱️','⌛','🕙','🕛','🕜','🕞','🕠','🕤','🕥','🕦'],
+    Fiesta: ['🎉','🎊','🎈','🎂','🪅','🎁','🥳','🍾','🎆','🎇','🎵','🎶','🎤','🎺','🎸','🎻','🎹','🥂','🍻','🍹'],
+    'Clima extremo': ['🌪️','🌊','🌋','🔥','❄️','🌀','☄️','🌫️','⚡','🌧️','🌨️','🌩️','🌬️','🌡️','☀️','🌙','🌈','🌪️','🌊','🔥'],
+    'Juegos de mesa': ['♠️','♥️','♣️','♦️','🎴','🃏','🧩','🎲','♟️','🎯','🎰','🎱','🕹️','🎮','🎲','🃏','♠️','♥️','♣️','♦️'],
+    'Animales voladores': ['🦅','🦉','🦇','🦜','🐦','🦢','🦆','🦚','🦃','🐔','🐥','🐣','🐤','🦩','🕊️','🦜','🦢','🦆','🦅','🦉'],
+    'Postres': ['🍰','🧁','🍩','🍪','🍫','🍬','🍭','🍮','🍨','🍧','🍦','🥧','🍯','🍡','🍢','🍦','🍨','🍧','🍰','🧁'],
+    'Tecnología antigua': ['☎️','📻','📺','💾','🕹️','📼','💿','📟','🗜️','📠','💽','📞','🖨️','📡','📺','☎️','📻','💾','🕹️','📼'],
+    'Medios de transporte terrestres': ['🚜','🚛','🚚','🚒','🚑','🚓','🚐','🚍','🛺','🚔','🚖','🚘','🚙','🚗','🚕','🚓','🚑','🚒','🚜','🚛'],
+   'Clash Royale': [
+    { name: 'Carta 1', img: './img/1.png' },
+    { name: 'Carta 2', img: './img/2.png' },
+    { name: 'Carta 3', img: './img/3.png' },
+    { name: 'Carta 4', img: './img/4.png' },
+    { name: 'Carta 5', img: './img/5.png' },
+    { name: 'Carta 6', img: './img/6.png' },
+    { name: 'Carta 7', img: './img/7.png' },
+    { name: 'Carta 8', img: './img/8.png' },
+    { name: 'Carta 9', img: './img/9.png' },
+    { name: 'Carta 10', img: './img/10.png' },
+    { name: 'Carta 11', img: './img/11.png' },
+    { name: 'Carta 12', img: './img/12.png' },
+    { name: 'Carta 13', img: './img/13.png' },
+    { name: 'Carta 14', img: './img/14.png' },
+    { name: 'Carta 15', img: './img/15.png' },
+    { name: 'Carta 16', img: './img/16.png' },
+    { name: 'Carta 17', img: './img/17.png' },
+    { name: 'Carta 18', img: './img/18.png' },
+    { name: 'Carta 19', img: './img/19.png' },
+    { name: 'Carta 20', img: './img/20.png' }
+  ]
+  };
+
+  const board = document.getElementById('board');
+  const categorySelect = document.getElementById('category-select');
+  const playerCountSelect = document.getElementById('player-count-select');
+  const resetBtn = document.getElementById('reset-btn');
+  const message = document.getElementById('message');
+  const scoresDiv = document.getElementById('scores');
+  const modeBtn = document.getElementById('mode-btn');
+
+  let flippedCards = [];
+  let matchedPairs = 0;
+  let cards = [];
+  let canFlip = true;
+  let players = [];
+  let currentPlayerIndex = 0;
+  let modes = ['dark', 'light', 'neon'];
+  let modeIndex = 0;
+
+  function loadCategories() {
+    for (const cat in categorias) {
+      const option = document.createElement('option');
+      option.value = cat;
+      option.textContent = cat;
+      categorySelect.appendChild(option);
+    }
+  }
+
+  function shuffle(arr) {
+    let currentIndex = arr.length, randomIndex;
+    while(currentIndex !== 0) {
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+      [arr[currentIndex], arr[randomIndex]] = [arr[randomIndex], arr[currentIndex]];
+    }
+    return arr;
+  }
+
+  function createBoard() {
+    board.innerHTML = '';
+    flippedCards = [];
+    matchedPairs = 0;
+    canFlip = true;
+    message.textContent = 'Turno de ' + players[currentPlayerIndex].name;
+
+    const category = categorySelect.value || Object.keys(categorias)[0];
+    const emojis = categorias[category].slice(0, 32); // Limitar máximo 32 pares (64 cartas)
+    cards = shuffle([...emojis, ...emojis]);
+
+    cards.forEach((emoji, index) => {
+      const card = document.createElement('div');
+      card.classList.add('card');
+      card.setAttribute('data-emoji', emoji);
+      card.setAttribute('data-index', index);
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('aria-label', 'Carta boca abajo');
+
+      // Crear estructura interna para el efecto flip
+      const inner = document.createElement('div');
+      inner.classList.add('card-inner');
+
+      const front = document.createElement('div');
+      front.classList.add('card-front');
+      front.textContent = '?'; // Fondo o dorso la carta
+
+      const back = document.createElement('div');
+      back.classList.add('card-back');
+      back.textContent = emoji;
+
+      inner.appendChild(front);
+      inner.appendChild(back);
+      card.appendChild(inner);
+
+      card.addEventListener('click', () => flipCard(card));
+      card.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          flipCard(card);
+        }
+      });
+
+      board.appendChild(card);
+    });
+  }
+
+  function updateScores() {
+    scoresDiv.innerHTML = '';
+    players.forEach((player, i) => {
+      const div = document.createElement('div');
+      div.classList.add('player-score');
+      if(i === currentPlayerIndex) div.classList.add('active');
+      div.textContent = player.name + ': ' + player.score + ' puntos';
+      scoresDiv.appendChild(div);
+    });
+  }
+
+  function nextPlayer() {
+    currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+    message.textContent = 'Turno de ' + players[currentPlayerIndex].name;
+    updateScores();
+  }
+
+  function flipCard(card) {
+    if(!canFlip) return;
+    if(flippedCards.includes(card)) return;
+    if(card.classList.contains('matched')) return;
+
+    card.classList.add('flipped');
+    flippedCards.push(card);
+
+    if(flippedCards.length === 2) {
+      canFlip = false;
+      setTimeout(checkMatch, 700);
+    }
+  }
+
+  function checkMatch() {
+    const [card1, card2] = flippedCards;
+    const emoji1 = card1.getAttribute('data-emoji');
+    const emoji2 = card2.getAttribute('data-emoji');
+
+    if(emoji1 === emoji2) {
+      card1.classList.add('matched');
+      card2.classList.add('matched');
+      players[currentPlayerIndex].score++;
+      matchedPairs++;
+      message.textContent = '¡Par correcto! ' + players[currentPlayerIndex].name + ' sigue jugando...';
+      flippedCards = [];
+      canFlip = true;
+      updateScores();
+
+      if(matchedPairs === cards.length / 2) {
+        canFlip = false;
+        const maxScore = Math.max(...players.map(p => p.score));
+        const winners = players.filter(p => p.score === maxScore);
+        if(winners.length === 1) {
+          message.textContent = '¡' + winners[0].name + ' ganó con ' + maxScore + ' puntos!';
+        } else {
+          message.textContent = '¡Empate entre ' + winners.map(p => p.name).join(', ') + ' con ' + maxScore + ' puntos!';
+        }
+      }
+
+    } else {
+      message.textContent = 'No fue par. Turno de ' + players[(currentPlayerIndex + 1) % players.length].name;
+      setTimeout(() => {
+        card1.classList.remove('flipped');
+        card2.classList.remove('flipped');
+        flippedCards = [];
+        canFlip = true;
+        nextPlayer();
+      }, 1000);
+    }
+  }
+
+  function initPlayers() {
+    players = [];
+    const count = parseInt(playerCountSelect.value, 10);
+    for(let i = 1; i <= count; i++) {
+      players.push({name: 'Jugador ' + i, score: 0});
+    }
+    currentPlayerIndex = 0;
+    updateScores();
+  }
+
+  function startGame() {
+    initPlayers();
+    createBoard();
+    message.textContent = 'Turno de ' + players[currentPlayerIndex].name;
+    updateScores();
+  }
+
+  function changeMode() {
+    // cycle modes
+    modeIndex = (modeIndex + 1) % modes.length;
+    document.body.classList.remove(...modes);
+    const newMode = modes[modeIndex];
+    document.body.classList.add(newMode);
+
+    modeBtn.textContent = 'Modo: ' + newMode.charAt(0).toUpperCase() + newMode.slice(1);
+  }
+
+  resetBtn.addEventListener('click', startGame);
+  modeBtn.addEventListener('click', changeMode);
+
+  loadCategories();
+  startGame();
+</script>
+
+</body>
+</html>
+
+
